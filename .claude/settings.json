@@ -1,0 +1,16 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(bash infra/credential-check.sh *)",
+      "Bash(bash infra/railway-setup.sh *)",
+      "Bash(bash infra/github-setup.sh *)",
+      "Bash(bash infra/auth0-setup.sh *)",
+      "Bash(chmod +x infra/*.sh)",
+      "Bash(railway *)",
+      "Bash(gh *)",
+      "Bash(git *)",
+      "Bash(curl *)",
+      "Bash(dig *)"
+    ]
+  }
+}
