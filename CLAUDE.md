@@ -67,15 +67,84 @@ Only check credentials for services actually needed. Run scripts in order:
 
 Print live links: app URL, Railway dashboard, GitHub repo, Auth0 dashboard (if applicable).
 
-### Migration Flow (when user mentions "migrate" or "Replit")
+### Migration Flow (when user mentions "migrate", "import", or "Replit")
 
-1. Don't scaffold new code — use their existing code
-2. Add `storage/filesystem.py` if they used Replit Object Storage
-3. Add Dockerfile and railway.json
-4. Migrate database: generate `pg_dump | pg_restore` command for user to run (Claude never sees credentials)
-5. Migrate secrets: generate `railway variables --set` commands — user runs them
-6. Migrate storage: use `migrate/migrate-storage.py` with MIGRATION_SECRET endpoints
-7. Update Auth0 callback URLs for new domain
+When a user wants to bring an existing Replit project into the blank-slate system, the goal is: **at the end, the repo should look as though this project was always a blank-slate project.** No trace of Replit. No leftover scaffolding.
+
+#### Step M1: Get the Code
+
+The user's code likely lives only on Replit with no local copy and no GitHub repo. Don't try to scrape Replit or access it via URL — that won't work for private Repls.
+
+**Best option — push from Replit's shell:**
+Tell the user to open their Repl's Shell tab and run:
+```bash
+git init && git add -A && git commit -m "export from replit"
+gh repo create JimmysDev/<name> --private --source=. --push
+```
+If `gh` isn't available on Replit, tell them to create an empty repo on GitHub first, then:
+```bash
+git init && git add -A && git commit -m "export from replit"
+git remote add origin https://github.com/JimmysDev/<name>.git
+git push -u origin main
+```
+Then clone it locally into `replit-source/` inside this directory.
+
+**Fallback — zip download:**
+Tell the user: in Replit, click the three dots (⋯) in the file panel → "Download as zip". Unzip into `replit-source/` in this directory.
+
+**Important:** Always put the imported code in `replit-source/`, never directly in the project root. This avoids conflicts with blank-slate files (both may have CLAUDE.md, .gitignore, etc).
+
+#### Step M2: Explore and Discover
+
+Read through `replit-source/` to understand:
+- **Stack:** Python/Flask, Node/Express, etc.
+- **Database:** Check for `DATABASE_URL` usage, SQLAlchemy models, Prisma schema, etc.
+- **Auth:** Look for Auth0, OAuth, session management
+- **Storage:** Look for `from replit.object_storage import Client` or similar
+- **Secrets/env vars:** Check `.replit`, any env references, Replit Secrets usage
+- **System deps:** Check `replit.nix` for packages like ffmpeg, Playwright, etc.
+- **Run command:** Check `.replit` for how the app starts
+
+Present what you found and ask the user to confirm. Ask about:
+- Custom domain (suggest `<project>.jimmys.dev`)
+- Any services that need reconnecting (Auth0 callback URLs, etc.)
+
+#### Step M3: Provision Infrastructure
+
+Use the same provisioning steps as a new project (Step 4 above), but:
+- Create the GitHub repo with `infra/github-setup.sh` (if not already created in M1)
+- Create Railway project with appropriate services based on what you discovered
+- If Auth0: create new Auth0 app OR ask user to update existing callback URLs
+
+#### Step M4: Adapt the Code
+
+Move files from `replit-source/` into the project root, making these changes:
+- **Replace Replit Object Storage** with `storage/filesystem.py` from `templates/app-stubs/python/storage/` (or Node equivalent). Update imports throughout the code.
+- **Add `Dockerfile`** — use the appropriate template but add any system dependencies found in `replit.nix` (e.g. ffmpeg, Playwright chromium deps)
+- **Add `railway.json`** from templates
+- **Add `start.sh`** if needed
+- **Remove Replit files:** `.replit`, `replit.nix`, `replit-deploy.json`, `.replit.deploy`, any `repl.deploy` binary
+- **Update `.gitignore`** — merge the imported project's gitignore with blank-slate's
+- **Preserve the app code** — don't restructure or refactor the user's code. Just make the minimal changes needed to run on Railway.
+
+#### Step M5: Handle Data Migration
+
+Walk the user through these (they run the commands — Claude never sees credentials):
+
+1. **Database:** Generate `pg_dump | pg_restore` commands. See `migrate/migrate-database.sh`.
+2. **Secrets:** List the env var names the app needs (from reading the code). Generate `railway variable set 'KEY=<value>'` commands for the user to fill in and run.
+3. **Blob storage:** If the app used Replit Object Storage, walk through the `migrate/migrate-storage.py` flow — add temporary migration endpoints, set MIGRATION_SECRET, run script on Replit. See `migrate/README.md`.
+4. **Auth0 callbacks:** If Auth0, tell user to add new Railway domain to callback/logout/origins URLs (keep old URLs until confirmed working).
+
+#### Step M6: Finalize
+
+Same as new project Steps 8-13:
+- Clean up `replit-source/` directory: `rm -rf replit-source/`
+- Rewrite CLAUDE.md with real project info
+- Create `project.json`
+- Delete scaffolding: `rm -rf infra/ templates/ migrate/ docs/`
+- Commit, push, set up Railway GitHub link (manual step)
+- Verify `/health` endpoint
 
 ## Session Protocol
 
