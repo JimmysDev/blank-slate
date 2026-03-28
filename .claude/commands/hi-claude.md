@@ -21,7 +21,7 @@ $ARGUMENTS
 
 **If they want to build something new:** Ask "What do you want to build?" then follow the "First-Time Setup Flow" in CLAUDE.md.
 
-**If they want to import from Replit:** Follow the "Migration Flow" section in CLAUDE.md. The first thing to figure out is how to get their code — push from Replit's shell to GitHub (preferred) or download as zip. Their code goes into `replit-source/` in this directory, never directly in the root. You'll explore it, discover the stack/DB/auth/storage, provision infrastructure, adapt the code, and clean up so the final repo looks like it was always a blank-slate project.
+**If they want to import from Replit:** Follow the "Migration Flow" section in CLAUDE.md starting at Step M1. The easiest way to get their code is a zip download from Replit — create the `replit-source/` folder immediately, give them the full path, and have them drop the zip there. You handle extraction. Read CLAUDE.md for the full step-by-step.
 
 ## If this is already configured (`project.json` exists):
 
