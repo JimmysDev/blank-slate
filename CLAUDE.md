@@ -75,24 +75,19 @@ When a user wants to bring an existing Replit project into the blank-slate syste
 
 The user's code likely lives only on Replit with no local copy and no GitHub repo. Don't try to scrape Replit or access it via URL — that won't work for private Repls.
 
-**Best option — push from Replit's shell:**
-Tell the user to open their Repl's Shell tab and run:
-```bash
-git init && git add -A && git commit -m "export from replit"
-gh repo create JimmysDev/<name> --private --source=. --push
-```
-If `gh` isn't available on Replit, tell them to create an empty repo on GitHub first, then:
-```bash
-git init && git add -A && git commit -m "export from replit"
-git remote add origin https://github.com/JimmysDev/<name>.git
-git push -u origin main
-```
-Then clone it locally into `replit-source/` inside this directory.
-
-**Fallback — zip download:**
-Tell the user: in Replit, click the three dots (⋯) in the file panel → "Download as zip". Have them drop the zip file anywhere in this directory. Then extract it yourself:
+**Immediately create the destination folder:**
 ```bash
 mkdir -p replit-source
+```
+
+**Easiest option — zip download (recommend this first):**
+Tell the user: in Replit, click the three dots (⋯) in the file panel → "Download as zip", then drop the zip file into the `replit-source/` folder (or anywhere in this directory). Once they confirm, extract it:
+```bash
+unzip -o replit-source/<filename>.zip -d replit-source/
+rm replit-source/<filename>.zip
+```
+If the zip was dropped in the project root instead:
+```bash
 unzip -o <filename>.zip -d replit-source/
 rm <filename>.zip
 ```
@@ -102,7 +97,15 @@ mv replit-source/<nested-folder>/* replit-source/<nested-folder>/.* replit-sourc
 rmdir replit-source/<nested-folder>
 ```
 
-**Important:** Always put the imported code in `replit-source/`, never directly in the project root. This avoids conflicts with blank-slate files (both may have CLAUDE.md, .gitignore, etc).
+**Alternative — push from Replit's shell to GitHub:**
+This is more involved (requires `gh` or git auth on Replit) but creates the GitHub repo early. Only suggest this if the user prefers it or is already comfortable with git on Replit.
+```bash
+git init && git add -A && git commit -m "export from replit"
+gh repo create JimmysDev/<name> --private --source=. --push
+```
+Then clone locally into `replit-source/`.
+
+**Important:** Always put the imported code in `replit-source/`, never directly in the project root. This avoids conflicts with blank-slate files (both may have CLAUDE.md, .gitignore, etc). The blank-slate agent handles creating the GitHub repo later as part of provisioning — the user doesn't need to do it themselves.
 
 #### Step M2: Explore and Discover
 
