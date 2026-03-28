@@ -6,15 +6,15 @@ Greet the user warmly and give them context on what's about to happen. Something
 
 "Hey! This is a fresh blank-slate template — I'll help you go from zero to a deployed app on Railway.
 
-I can **build something new** or **import an existing project from Replit**. Either way, I'll set up:
+Here's what I can set up for you:
 - **GitHub repo** with auto-merge CI
 - **Railway project** with Postgres, persistent storage, custom domain
 - **Auth0** if you need login/authentication
-- **Dockerfile + deployment config**
+- **Dockerfile + app scaffold** (Python/Flask or Node/Express)
 
 The whole thing takes about 5 minutes. I'll walk you through it step by step, and the only thing you'll need to do manually is one click in the Railway dashboard to connect your GitHub repo.
 
-**What would you like to do — build something new, or import from Replit?**"
+**What do you want to build?** I can also import existing projects from Replit — just ask."
 
 If the user provided arguments, skip the question and use their answer directly:
 $ARGUMENTS

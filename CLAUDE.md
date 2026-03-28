@@ -90,7 +90,17 @@ git push -u origin main
 Then clone it locally into `replit-source/` inside this directory.
 
 **Fallback — zip download:**
-Tell the user: in Replit, click the three dots (⋯) in the file panel → "Download as zip". Unzip into `replit-source/` in this directory.
+Tell the user: in Replit, click the three dots (⋯) in the file panel → "Download as zip". Have them drop the zip file anywhere in this directory. Then extract it yourself:
+```bash
+mkdir -p replit-source
+unzip -o <filename>.zip -d replit-source/
+rm <filename>.zip
+```
+Replit zips sometimes nest everything inside a subdirectory. If `replit-source/` contains a single folder with all the files inside it, move everything up:
+```bash
+mv replit-source/<nested-folder>/* replit-source/<nested-folder>/.* replit-source/ 2>/dev/null
+rmdir replit-source/<nested-folder>
+```
 
 **Important:** Always put the imported code in `replit-source/`, never directly in the project root. This avoids conflicts with blank-slate files (both may have CLAUDE.md, .gitignore, etc).
 
