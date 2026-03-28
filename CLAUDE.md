@@ -116,6 +116,23 @@ Claude must NEVER see secret values. Pattern:
 - Verify by checking key names only: `railway variables --json | python3 -c "import sys,json; print(list(json.load(sys.stdin).keys()))"`
 - Use single-quoted values with `railway variables --set 'KEY=value'` to avoid trailing newlines
 
+## Local Dev with Tailscale
+
+Tailscale makes the local dev server accessible from any device on the tailnet (phone, other computers).
+
+- Mac hostname on tailnet: `jimmys-mac-mini`
+- Access local dev server from phone: `http://jimmys-mac-mini:<port>` (e.g. `:5000` for Flask)
+- Tailscale must be running on both the Mac and the accessing device
+- Keep Tailscale updated: `brew upgrade --cask tailscale`
+
+## Homebrew Maintenance
+
+Keep CLI tools updated periodically:
+```bash
+brew upgrade railway gh auth0 tailscale
+brew upgrade --cask tailscale
+```
+
 ## Railway CLI Gotchas
 
 - `railway variables --set` adds trailing newline to values — always single-quote: `'KEY=value'`
