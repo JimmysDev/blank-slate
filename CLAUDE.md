@@ -81,7 +81,12 @@ mkdir -p replit-source
 ```
 
 **Easiest option — zip download (recommend this first):**
-Tell the user: in Replit, click the three dots (⋯) in the file panel → "Download as zip", then drop the zip file into the `replit-source/` folder (or anywhere in this directory). Once they confirm, extract it:
+Tell the user step by step:
+1. In Replit, open the project, click the three dots (⋯) at the top of the file panel → "Download as zip"
+2. Move the downloaded zip file into the `replit-source/` folder that you just created (give them the full path, e.g. `~/Documents/Coding/local-repos/<project>/replit-source/`)
+3. Let you know when it's there
+
+Once they confirm, extract it:
 ```bash
 unzip -o replit-source/<filename>.zip -d replit-source/
 rm replit-source/<filename>.zip
