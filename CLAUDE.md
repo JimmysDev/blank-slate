@@ -89,20 +89,23 @@ Tell the user step by step:
 2. Move the downloaded zip file into the `replit-source/` folder that you just created (give them the full path using `$REPO_ROOT/replit-source/`, e.g. `~/Documents/Coding/local-repos/<project>/replit-source/`)
 3. Let you know when it's there
 
-Once they confirm, extract it:
+Once they confirm, find and extract the zip:
 ```bash
-unzip -o replit-source/<filename>.zip -d replit-source/
-rm replit-source/<filename>.zip
-```
-If the zip was dropped in the project root instead:
-```bash
-unzip -o <filename>.zip -d replit-source/
-rm <filename>.zip
+# Extract (handles zip in replit-source/ or project root)
+unzip -o "$REPO_ROOT/replit-source"/*.zip -d "$REPO_ROOT/replit-source/" 2>/dev/null || \
+unzip -o "$REPO_ROOT"/*.zip -d "$REPO_ROOT/replit-source/" 2>/dev/null
+# Clean up the zip
+rm -f "$REPO_ROOT/replit-source"/*.zip "$REPO_ROOT"/*.zip
 ```
 Replit zips sometimes nest everything inside a subdirectory. If `replit-source/` contains a single folder with all the files inside it, move everything up:
 ```bash
-mv replit-source/<nested-folder>/* replit-source/<nested-folder>/.* replit-source/ 2>/dev/null
-rmdir replit-source/<nested-folder>
+mv "$REPO_ROOT/replit-source"/<nested-folder>/* "$REPO_ROOT/replit-source"/<nested-folder>/.* "$REPO_ROOT/replit-source"/ 2>/dev/null
+rmdir "$REPO_ROOT/replit-source"/<nested-folder>
+```
+
+**If you're in a worktree**, copy the extracted source into your worktree after extraction so you can work with it:
+```bash
+cp -a "$REPO_ROOT/replit-source" ./replit-source
 ```
 
 **If the Replit project is already synced with GitHub:**
