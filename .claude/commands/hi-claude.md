@@ -2,26 +2,20 @@ Silently check the state of this repository by looking for `infra/` and `project
 
 ## If this is an unconfigured blank-slate (`infra/` exists, no `project.json`):
 
-Greet the user warmly and give them context on what's about to happen. Something like:
+Greet the user briefly and ask what they'd like to do. Keep it short — no bullet-point feature lists, no "here's what I can set up" speeches. Something like:
 
-"Hey! This is a fresh blank-slate template — I'll help you go from zero to a deployed app on Railway.
+"Hey! This is a fresh blank-slate — I'll help you get a project deployed on Railway from scratch. The whole thing takes about 5 minutes.
 
-Here's what I can set up for you:
-- **GitHub repo** with auto-merge CI
-- **Railway project** with Postgres, persistent storage, custom domain
-- **Auth0** if you need login/authentication
-- **Dockerfile + app scaffold** (Python/Flask or Node/Express)
-
-The whole thing takes about 5 minutes. I'll walk you through it step by step, and the only thing you'll need to do manually is one click in the Railway dashboard to connect your GitHub repo.
-
-**What do you want to build?** I can also import existing projects from Replit — just ask."
+**What do you want to build?** I can also import existing projects from Replit, or answer questions before we begin building."
 
 If the user provided arguments, skip the question and use their answer directly:
 $ARGUMENTS
 
-**If they want to build something new:** Ask "What do you want to build?" then follow the "First-Time Setup Flow" in CLAUDE.md.
+**If they want to build something new:** Follow the "First-Time Setup Flow" in CLAUDE.md — determine requirements from their answer, present a plan, get confirmation, provision.
 
 **If they want to import from Replit:** Follow the "Migration Flow" section in CLAUDE.md starting at Step M1. The easiest way to get their code is a zip download from Replit — create the `replit-source/` folder immediately, give them the full path, and have them drop the zip there. You handle extraction. Read CLAUDE.md for the full step-by-step.
+
+**If they have questions:** Answer them. Explain what blank-slate does, what services it provisions (GitHub, Railway, Auth0, DNS), what stacks are supported (Python/Flask, Node/Express), how the auto-deploy pipeline works, etc. When they're ready to start, circle back to "What do you want to build?"
 
 ## If this is already configured (`project.json` exists):
 
