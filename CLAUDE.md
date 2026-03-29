@@ -75,15 +75,18 @@ When a user wants to bring an existing Replit project into the blank-slate syste
 
 The user's code likely lives only on Replit with no local copy and no GitHub repo. Don't try to scrape Replit or access it via URL — that won't work for private Repls.
 
-**Immediately create the destination folder:**
+**Immediately create the destination folder in the repo root (not the worktree):**
+If you're in a worktree, find the main repo root first:
 ```bash
-mkdir -p replit-source
+REPO_ROOT=$(git worktree list | head -1 | awk '{print $1}')
+mkdir -p "$REPO_ROOT/replit-source"
 ```
+If not in a worktree, just `mkdir -p replit-source`.
 
 **Easiest option — zip download (recommend this first):**
 Tell the user step by step:
 1. In Replit, open the project, click the three dots (⋯) at the top of the file panel → "Download as zip"
-2. Move the downloaded zip file into the `replit-source/` folder that you just created (give them the full path, e.g. `~/Documents/Coding/local-repos/<project>/replit-source/`)
+2. Move the downloaded zip file into the `replit-source/` folder that you just created (give them the full path using `$REPO_ROOT/replit-source/`, e.g. `~/Documents/Coding/local-repos/<project>/replit-source/`)
 3. Let you know when it's there
 
 Once they confirm, extract it:
@@ -103,9 +106,9 @@ rmdir replit-source/<nested-folder>
 ```
 
 **If the Replit project is already synced with GitHub:**
-Ask the user for the repo name and clone it directly:
+Ask the user for the repo name and clone it directly into the repo root:
 ```bash
-git clone https://github.com/<owner>/<repo>.git replit-source
+git clone https://github.com/<owner>/<repo>.git "$REPO_ROOT/replit-source"
 ```
 This is the fastest path — no zip, no manual steps.
 
