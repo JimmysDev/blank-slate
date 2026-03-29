@@ -173,6 +173,7 @@ Then make these changes:
 - **Create `railway.json`** from the template you saved
 - **Create `start.sh`** if needed
 - **Update `.gitignore`** — merge the imported project's gitignore with blank-slate's
+- **Fix the dev port** — Replit apps typically default to port 5000, which conflicts with AirPlay Receiver on macOS. Change the local dev fallback to 8080 (e.g. `os.environ.get("PORT", 8080)`). Railway sets `PORT` automatically in production, so this only affects local dev.
 - **Preserve the app code** — don't restructure or refactor the user's code. Just make the minimal changes needed to run on Railway.
 
 **Do NOT delete `replit-source/` yet.** Keep it as a backup until everything is committed and verified working.
