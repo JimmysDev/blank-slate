@@ -149,33 +149,45 @@ Use the same provisioning steps as a new project (Step 4 above), but:
 
 #### Step M4: Adapt the Code
 
-Move files from `replit-source/` into the project root, making these changes:
-- **Replace Replit Object Storage** with `storage/filesystem.py` from `templates/app-stubs/python/storage/` (or Node equivalent). Update imports throughout the code.
-- **Add `Dockerfile`** — use the appropriate template but add any system dependencies found in `replit.nix` (e.g. ffmpeg, Playwright chromium deps)
-- **Add `railway.json`** from templates
-- **Add `start.sh`** if needed
+**CRITICAL: Delete blank-slate scaffolding BEFORE moving user code into the project root.** The scaffolding `templates/` directory will collide with Flask's `templates/` directory (or similar app directories). Delete scaffolding first, then move user code.
+
+```bash
+# 1. Copy anything you still need from scaffolding (Dockerfile template, railway.json, storage abstraction, etc.)
+#    into a temporary location or read them into memory BEFORE deleting.
+# 2. Delete scaffolding directories
+rm -rf infra/ templates/ migrate/ docs/ BLANK_SLATE_PLAN.md
+# 3. NOW move user code from replit-source/ into project root
+cp -a replit-source/* replit-source/.* . 2>/dev/null
+```
+
+Then make these changes:
+- **Replace Replit Object Storage** with the storage abstraction you saved from `templates/app-stubs/`. Update imports throughout the code.
+- **Create `Dockerfile`** — based on the template you saved, add any system dependencies found in `replit.nix` (e.g. ffmpeg, Playwright chromium deps)
+- **Create `railway.json`** from the template you saved
+- **Create `start.sh`** if needed
 - **Remove Replit files:** `.replit`, `replit.nix`, `replit-deploy.json`, `.replit.deploy`, any `repl.deploy` binary
 - **Update `.gitignore`** — merge the imported project's gitignore with blank-slate's
 - **Preserve the app code** — don't restructure or refactor the user's code. Just make the minimal changes needed to run on Railway.
+
+**Do NOT delete `replit-source/` yet.** Keep it as a backup until everything is committed and verified working.
 
 #### Step M5: Handle Data Migration
 
 Walk the user through these (they run the commands — Claude never sees credentials):
 
-1. **Database:** Generate `pg_dump | pg_restore` commands. See `migrate/migrate-database.sh`.
+1. **Database:** Generate `pg_dump | pg_restore` commands. See the migration guide patterns.
 2. **Secrets:** List the env var names the app needs (from reading the code). Generate `railway variable set 'KEY=<value>'` commands for the user to fill in and run.
-3. **Blob storage:** If the app used Replit Object Storage, walk through the `migrate/migrate-storage.py` flow — add temporary migration endpoints, set MIGRATION_SECRET, run script on Replit. See `migrate/README.md`.
+3. **Blob storage:** If the app used Replit Object Storage, walk through the storage migration flow — add temporary migration endpoints, set MIGRATION_SECRET, run script on Replit.
 4. **Auth0 callbacks:** If Auth0, tell user to add new Railway domain to callback/logout/origins URLs (keep old URLs until confirmed working).
 
 #### Step M6: Finalize
 
 Same as new project Steps 8-13:
-- Clean up `replit-source/` directory: `rm -rf replit-source/`
 - Rewrite CLAUDE.md with real project info
 - Create `project.json`
-- Delete scaffolding: `rm -rf infra/ templates/ migrate/ docs/`
 - Commit, push, set up Railway GitHub link (manual step)
 - Verify `/health` endpoint
+- **Only after everything is verified:** `rm -rf replit-source/`
 
 ## Session Protocol
 
