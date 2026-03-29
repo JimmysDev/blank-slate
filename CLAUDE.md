@@ -71,6 +71,8 @@ Print live links: app URL, Railway dashboard, GitHub repo, Auth0 dashboard (if a
 
 When a user wants to bring an existing Replit project into the blank-slate system, the goal is: **at the end, the repo should look as though this project was always a blank-slate project.** No trace of Replit. No leftover scaffolding.
 
+**Assume a full migration.** "Import from Replit" means everything — code, database, blob storage, secrets, the lot. Don't ask "do you want to migrate your data too?" after deploying the code. Plan for data migration from the start (Step M2) and execute it as part of the flow (Step M5).
+
 #### Step M1: Get the Code
 
 The user's code likely lives only on Replit with no local copy and no GitHub repo. Don't try to scrape Replit or access it via URL — that won't work for private Repls.
