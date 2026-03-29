@@ -2,11 +2,9 @@ Silently check the state of this repository by looking for `infra/` and `project
 
 ## If this is an unconfigured blank-slate (`infra/` exists, no `project.json`):
 
-Greet the user briefly and ask what they'd like to do. Keep it short — no bullet-point feature lists, no "here's what I can set up" speeches. Something like:
+Say exactly this and nothing else before it:
 
-"Hey! This is a fresh blank-slate — I'll help you get a project deployed on Railway from scratch. The whole thing takes about 5 minutes.
-
-**What do you want to build?** I can also import existing projects from Replit, or answer questions before we begin building."
+"**What do you want to build?** I can also import existing projects from Replit, or answer questions before we begin building."
 
 If the user provided arguments, skip the question and use their answer directly:
 $ARGUMENTS
