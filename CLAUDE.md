@@ -152,20 +152,24 @@ Use the same provisioning steps as a new project (Step 4 above), but:
 **CRITICAL: Delete blank-slate scaffolding BEFORE moving user code into the project root.** The scaffolding `templates/` directory will collide with Flask's `templates/` directory (or similar app directories). Delete scaffolding first, then move user code.
 
 ```bash
-# 1. Copy anything you still need from scaffolding (Dockerfile template, railway.json, storage abstraction, etc.)
-#    into a temporary location or read them into memory BEFORE deleting.
+# 1. Read/save anything you need from scaffolding templates (Dockerfile template,
+#    railway.json, storage abstraction, etc.) into memory BEFORE deleting.
 # 2. Delete scaffolding directories
 rm -rf infra/ templates/ migrate/ docs/ BLANK_SLATE_PLAN.md
-# 3. NOW move user code from replit-source/ into project root
+# 3. Copy ALL user code from replit-source/ into project root
 cp -a replit-source/* replit-source/.* . 2>/dev/null
+# 4. Remove ONLY known Replit-specific files
+rm -f .replit replit.nix replit-deploy.json .replit.deploy repl.deploy replit.md
+rm -rf __pycache__ .cache .upm
 ```
 
+**IMPORTANT: Copy EVERYTHING from `replit-source/`, then remove only the known Replit files listed above.** Do NOT cherry-pick which files to copy — you will miss things (notes, docs, reference images, config files, etc. that you didn't read). The user's project may contain files you don't know about. Copy all, remove only what's explicitly Replit-specific.
+
 Then make these changes:
-- **Replace Replit Object Storage** with the storage abstraction you saved from `templates/app-stubs/`. Update imports throughout the code.
+- **Replace Replit Object Storage** (if used) with the storage abstraction you saved from the templates. Update imports throughout the code.
 - **Create `Dockerfile`** — based on the template you saved, add any system dependencies found in `replit.nix` (e.g. ffmpeg, Playwright chromium deps)
 - **Create `railway.json`** from the template you saved
 - **Create `start.sh`** if needed
-- **Remove Replit files:** `.replit`, `replit.nix`, `replit-deploy.json`, `.replit.deploy`, any `repl.deploy` binary
 - **Update `.gitignore`** — merge the imported project's gitignore with blank-slate's
 - **Preserve the app code** — don't restructure or refactor the user's code. Just make the minimal changes needed to run on Railway.
 
