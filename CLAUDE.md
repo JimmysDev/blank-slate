@@ -102,8 +102,15 @@ mv replit-source/<nested-folder>/* replit-source/<nested-folder>/.* replit-sourc
 rmdir replit-source/<nested-folder>
 ```
 
+**If the Replit project is already synced with GitHub:**
+Ask the user for the repo name and clone it directly:
+```bash
+git clone https://github.com/<owner>/<repo>.git replit-source
+```
+This is the fastest path — no zip, no manual steps.
+
 **Alternative — push from Replit's shell to GitHub:**
-This is more involved (requires `gh` or git auth on Replit) but creates the GitHub repo early. Only suggest this if the user prefers it or is already comfortable with git on Replit.
+This is more involved (requires `gh` or git auth on Replit). Only suggest this if the user specifically asks.
 ```bash
 git init && git add -A && git commit -m "export from replit"
 gh repo create JimmysDev/<name> --private --source=. --push

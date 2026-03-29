@@ -4,7 +4,7 @@ Silently check the state of this repository by looking for `infra/` and `project
 
 Say exactly this and nothing else before it:
 
-"**What do you want to build?** I can also import existing projects from Replit, or answer questions before we begin building."
+"**What do you want to build?** I can also import existing projects from Replit (or clone them if they're synced with GitHub), or answer questions before we begin building."
 
 If the user provided arguments, skip the question and use their answer directly:
 $ARGUMENTS
