@@ -1,4 +1,4 @@
-Check the state of this repository by looking for `infra/` and `project.json`.
+Silently check the state of this repository by looking for `infra/` and `project.json`. Do NOT narrate the state detection to the user (don't say things like "infra/ exists and there's no project.json"). Just go straight into the appropriate greeting.
 
 ## If this is an unconfigured blank-slate (`infra/` exists, no `project.json`):
 
