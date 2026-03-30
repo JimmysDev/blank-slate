@@ -1,4 +1,76 @@
-# Blank-Slate: Railway-First Project Scaffolding Template
+# Blank-Slate: Railway Infrastructure Plugin
+
+## V2 Design Direction (agreed March 2026)
+
+### The Shift
+
+blank-slate started as a template repo you clone. That works for "start from scratch" but breaks down for every other scenario — importing from Replit means cramming code into blank-slate's repo, existing repos conflict with blank-slate's CLAUDE.md, etc.
+
+**New model:** blank-slate is a **plugin**, not a template. It's a distribution repo that holds infrastructure scripts, templates, migration guides, and a skill file. It's never the foundation of your project — your project is the foundation, and blank-slate's capabilities get layered on.
+
+### How It Works
+
+**The skill is `/blank-slate-setup`.** It lives at `.claude/commands/blank-slate-setup.md`. When invoked, it:
+
+1. Checks if infra scripts are local — if not, copies them from blank-slate's distribution
+2. Checks if there's a CLAUDE.md — if not, pulls blank-slate's full version. If yes, leaves it alone (appends infrastructure sections at the end after provisioning)
+3. Reads the existing codebase to understand what's there
+4. Asks what needs provisioning (or infers from context)
+5. Runs the infra scripts (Railway, GitHub, Auth0, DNS)
+6. Adds deployment files (Dockerfile, railway.json, auto-pr.yml) — only what's missing
+7. Cleans up scaffolding, appends standard sections to CLAUDE.md, creates project.json
+
+### Distribution
+
+The blank-slate repo (`JimmysDev/blank-slate`, private) is the source of truth. It holds:
+- `.claude/commands/blank-slate-setup.md` — the skill file
+- `CLAUDE.md` — pulled into projects that don't have one
+- `infra/` — scripts (credential-check, railway-setup, github-setup, auth0-setup)
+- `templates/` — Dockerfiles, railway.json, start.sh, app stubs, storage abstraction
+- `migrate/` — Replit migration guides and scripts
+
+**pixel-agency** maintains a local copy of blank-slate (cloned or periodically pulled). When creating a project:
+- Agency creates the project directory
+- If the user wants infrastructure: agency copies `.claude/commands/blank-slate-setup.md` (and optionally the full `infra/` + `templates/` dirs) into the project
+- If importing from Replit: agency gets the code into the project root first (zip download, clone, etc.), then copies in blank-slate files
+- If no infrastructure wanted: agency does nothing — blank-slate never enters the picture
+
+**Solo use (no agency):** User clones blank-slate, copies the skill file into their project. Or for a new project, clones blank-slate directly (same as today's flow 1).
+
+### The Four Flows — Unified
+
+1. **New project (solo):** Clone blank-slate, run `/blank-slate-setup`, describe what you want. Full CLAUDE.md is already there. Provisions + scaffolds code.
+
+2. **Import from Replit:** Project dir starts with the user's code (agency assembled it, or user dropped a zip). Blank-slate skill is in `.claude/commands/`. Run `/blank-slate-setup import from Replit`. Agent explores code, provisions infrastructure around it, strips Replit-specific files, handles data migration. No more `replit-source/` shuffle — the user's code IS the repo.
+
+3. **Existing repo + wants infrastructure:** Code is already here with its own CLAUDE.md. Agency dropped in the skill. Run `/blank-slate-setup`. Agent explores, asks what to provision, layers infrastructure on top. Existing CLAUDE.md gets infrastructure sections appended, not replaced.
+
+4. **Existing repo, no infrastructure:** blank-slate is never involved. Agency manages the project without it.
+
+### Maintenance
+
+- Push updates to `JimmysDev/blank-slate`
+- Agency pulls latest periodically (on startup, on demand, etc.)
+- Already-provisioned projects don't need updates — scripts are gone, CLAUDE.md sections are static
+- Only the next project benefits from improvements
+
+### What This Means for the Current Codebase
+
+The existing scripts, templates, and migration tools are all still valid — they just get reorganized:
+- The skill file (`/blank-slate-setup`) replaces `/hi-claude` as the entry point
+- CLAUDE.md becomes a "full version" that gets pulled into empty projects, and a "sections to append" version for existing projects
+- The `replit-source/` flow in CLAUDE.md gets simplified since agency handles getting code into the project root
+
+### Open Questions
+
+- Should `/blank-slate-setup` remain the name, or something shorter?
+- How does agency signal to the skill what kind of setup is needed (new vs import vs existing)? Environment variable? A config file?
+- Should the skill auto-detect the scenario, or always ask?
+
+---
+---
+
+## V1 Design (original — implemented, being superseded by V2)
 
 ## Context
 
