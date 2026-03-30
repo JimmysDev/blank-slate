@@ -1,25 +1,33 @@
 # blank-slate
 
-Railway-first project scaffolding template. Clone it, run `/hi-claude`, describe what you want to build, and Claude provisions everything.
+Railway infrastructure plugin for projects. Add it to any repo to get automated provisioning of Railway deployments, GitHub repos, Auth0 apps, and custom domains.
 
 ## Quick Start
 
-```bash
-# Clone into a new project directory
-git clone https://github.com/JimmysDev/blank-slate.git my-new-project
-cd my-new-project
+### New Project (solo)
 
-# Open Claude Code and run:
-/hi-claude I want to build a podcast app with user accounts and file uploads
+```bash
+git clone git@github.com:JimmysDev/blank-slate.git my-new-project
+cd my-new-project
+# Open Claude Code, then:
+/blank-slate-setup I want to build a podcast app with user accounts
 ```
 
-Claude will:
-1. Ask clarifying questions about your stack and requirements
-2. Create a Railway project with the right services (Postgres, Volume, etc.)
-3. Create a GitHub repo and wire up auto-deploy
-4. Set up Auth0 if you need authentication
-5. Configure your custom domain
-6. Deploy and verify your `/health` endpoint is live
+### With pixel-agency
+
+Agency handles setup — creates the project directory, copies in blank-slate files, and optionally imports your existing code. Then just run `/blank-slate-setup`.
+
+### Existing Repo
+
+Copy `.claude/commands/blank-slate-setup.md` and the `infra/` directory into your repo, then run `/blank-slate-setup`.
+
+## What It Provisions
+
+- **GitHub repo** with auto-merge CI (push → PR → squash-merge → deploy)
+- **Railway project** with Postgres, persistent volume, custom domain
+- **Auth0** app with callback URLs (optional)
+- **Dockerfile + deployment config** (Python/Flask or Node/Express)
+- **DNS** via GoDaddy API (optional)
 
 ## What You Need
 
@@ -28,24 +36,16 @@ First time only (~5 min):
 - [GitHub CLI](https://cli.github.com): `brew install gh && gh auth login`
 - Optional: [Auth0 CLI](https://github.com/auth0/auth0-cli): `brew install auth0 && auth0 login`
 
-Returning users: credentials persist, zero friction.
-
 ## How It Works
 
-The `infra/` directory contains non-interactive scripts that Claude orchestrates:
-- `credential-check.sh` — verifies you're logged in to each service
-- `railway-setup.sh` — creates Railway project, DB, volume, domain
-- `github-setup.sh` — creates repo, sets permissions
-- `auth0-setup.sh` — creates Auth0 app (optional)
+The `/blank-slate-setup` skill reads `infra/SETUP.md` and orchestrates non-interactive scripts:
+- `infra/credential-check.sh` — verifies CLI auth
+- `infra/railway-setup.sh` — creates Railway project, DB, volume, domain
+- `infra/github-setup.sh` — creates repo, sets permissions
+- `infra/auth0-setup.sh` — creates Auth0 app (optional)
 
-After setup, scaffolding directories (`infra/`, `templates/`, `migrate/`, `docs/`) are deleted. Only your app code remains.
+After setup, scaffolding (`infra/`, `templates/`, `migrate/`, `docs/`) is deleted. Only app code and deployment config remain.
 
 ## Migrating from Replit?
 
-Mention "migrate" or "Replit" when talking to Claude. It will:
-- Add the Railway filesystem storage abstraction (drop-in replacement for Replit Object Storage)
-- Generate `pg_dump`/`pg_restore` commands for your database
-- Help transfer blob storage via temporary authenticated endpoints
-- Update Auth0 callback URLs
-
-See `migrate/README.md` for details.
+The Replit import flow handles everything: code, database, blob storage, secrets, Auth0 callbacks. See `infra/SETUP.md` for the full flow, or just run `/blank-slate-setup` and say "import from Replit."

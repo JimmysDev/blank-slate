@@ -1,20 +1,8 @@
-# CLAUDE.md
+# Standard CLAUDE.md Sections
 
-This file provides guidance to Claude Code (claude.ai/code) when working with code in this repository.
+These sections should be appended to a project's CLAUDE.md after provisioning. Copy everything below the line.
 
-## State Detection
-
-**Check the current state of this repo before doing anything:**
-
-- If `infra/SETUP.md` exists AND `project.json` does NOT exist → **this project needs setup**. Run `/blank-slate-setup` or read `infra/SETUP.md` for instructions.
-- If `project.json` exists → this is a configured project. Read the Project Overview section and work normally.
-
-## Project Overview
-
-<!-- SETUP: filled in after provisioning -->
-This project was created from the blank-slate template. Run `/blank-slate-setup` to configure it.
-
-**Stack:** <!-- SETUP: filled in after provisioning -->
+---
 
 ## Session Protocol
 
@@ -55,13 +43,11 @@ Claude must NEVER see secret values. Pattern:
 - Verify by checking key names only: `railway variables --json | python3 -c "import sys,json; print(list(json.load(sys.stdin).keys()))"`
 - Use single-quoted values with `railway variables --set 'KEY=value'` to avoid trailing newlines
 
-## Local Dev with Tailscale
+## Railway-Managed Files
 
-Tailscale makes the local dev server accessible from any device on the tailnet (phone, other computers).
-
-- Mac hostname on tailnet: `jimmys-mac-mini`
-- Access local dev server from phone: `http://jimmys-mac-mini:<port>` (e.g. `:8080` for Flask)
-- Tailscale must be running on both the Mac and the accessing device
+The following files are managed by Railway deployment and should only be modified intentionally:
+- `Dockerfile` — container build instructions
+- `railway.json` — Railway build and deploy config
 
 ## Railway CLI Gotchas
 
@@ -72,3 +58,11 @@ Tailscale makes the local dev server accessible from any device on the tailnet (
 - Docker builds take 3-7 min — poll `/health` after deploy, don't assume it's ready
 - GitHub repo linking CANNOT be done via CLI — one manual dashboard step
 - Railway Volumes persist across deploys — `/data` is the default mount point
+
+## Local Dev with Tailscale
+
+Tailscale makes the local dev server accessible from any device on the tailnet (phone, other computers).
+
+- Mac hostname on tailnet: `jimmys-mac-mini`
+- Access local dev server from phone: `http://jimmys-mac-mini:<port>` (e.g. `:8080` for Flask)
+- Tailscale must be running on both the Mac and the accessing device
